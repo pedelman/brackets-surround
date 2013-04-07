@@ -15,14 +15,13 @@
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
  */
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define, brackets, window */
+/*global define, brackets, window, $, Mustache */
 
 define(function (require, exports, module) {
     'use strict';
@@ -30,13 +29,16 @@ define(function (require, exports, module) {
     var CommandManager  = brackets.getModule("command/CommandManager"),
         Menus           = brackets.getModule("command/Menus"),
         EditorManager   = brackets.getModule("editor/EditorManager"),
-        QuickOpen       = brackets.getModule("search/QuickOpen"),
-        editMenu = Menus.getMenu(Menus.AppMenuBar.EDIT_MENU),
+        ExtensionUtils  = brackets.getModule("utils/ExtensionUtils"),
+        Dialogs         = brackets.getModule("widgets/Dialogs"),
+        surroundHtml    = require("text!templates/surround-input-modal.html"),
+        editMenu        = Menus.getMenu(Menus.AppMenuBar.EDIT_MENU),
         COMMAND_ID = "pedelman.surround",
         COMMAND_NAME = "Surround",
         cases = {
             '('    :   ')',
             '{'    :   '}',
+            '{{'   :  '}}',
             '<'    :   '>',
             '['    :   ']',
             '/*'   :  '*/',
@@ -45,13 +47,15 @@ define(function (require, exports, module) {
             '<%='  :  '%>'
         };
 
+    ExtensionUtils.loadStyleSheet(module, "surround-input-modal.css");
+
     /*
      * _getSelectedText()
-     * @private     
+     * @private
      * Returns the text that has been selected in the editor window in focus     
      */
     function _getSelectedText() {
-        return EditorManager.getFocusedEditor().getSelectedText();
+        return EditorManager.getActiveEditor().getSelectedText();
     }
 
     /*
@@ -61,7 +65,8 @@ define(function (require, exports, module) {
      * @param {String} str
      */
     function _replaceActiveSelection(str) {
-        EditorManager.getFocusedEditor()._codeMirror.replaceSelection(str);
+        EditorManager.getActiveEditor()._codeMirror.replaceSelection(str);
+        EditorManager.focusEditor();
     }
 
     /*
@@ -87,6 +92,9 @@ define(function (require, exports, module) {
     function _closeHTML(str) {
         var _tag_type = new RegExp("[a-zA-Z0-9]+", ""),
             _tag = str.match(_tag_type);
+        if (_tag === "img") {
+            return false;
+        }
         return ("</" + _tag + ">");
     }
 
@@ -97,23 +105,34 @@ define(function (require, exports, module) {
      */
     function surround() {
         var _t = _getSelectedText(),
-            _c = window.prompt("Surround Selection With:"),
             _output = "";
-        if (_c === null) {
-            return;
-        }
-        if (cases[_c] !== undefined) {
-            _output = _c + _t + cases[_c];
-        } else {
-            if (_isHTML(_c)) {
-                _output = _c + _t + _closeHTML(_c);
-            } else {
-                _output = _c + _t + _c;
+        Dialogs.showModalDialogUsingTemplate(surroundHtml);
+        
+        $('#surround_input').keypress(function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                var _c = $('#surround_input').val();
+                console.log(_c);
+    
+                if (_c === null) {
+                    return;
+                }
+                if (cases[_c] !== undefined) {
+                    _output = _c + _t + cases[_c];
+                } else {
+                    if (_isHTML(_c)) {
+                        _output = _c + _t + _closeHTML(_c);
+                    } else {
+                        _output = _c + _t + _c;
+                    }
+                }
+                $('.surround_input').fadeOut(300);
+                Dialogs.cancelModalDialogIfOpen('.surround_input');
+                _replaceActiveSelection(_output);
             }
-        }
-        _replaceActiveSelection(_output);
+        });
     }
-
+                                      
     CommandManager.register(COMMAND_NAME, COMMAND_ID, surround);
     editMenu.addMenuItem(COMMAND_ID, "Ctrl-Shift-J");
 });

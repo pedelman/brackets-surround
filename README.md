@@ -23,7 +23,7 @@ Restart Brackets to see the new plugin. To verify the extension was loaded, clic
 
 #### Easy to add new functionality
 
-```
+```js
 cases = {
    '('    :   ')',
    '{'    :   '}',

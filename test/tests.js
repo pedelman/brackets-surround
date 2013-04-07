@@ -50,7 +50,6 @@ test( "is valid html tag test", function() {
 
 test( "closes tags properly", function() {
    ok( _closeHTML("<div>") == "</div>", "closes div tag properly" );
-   ok( _closeHTML('<img>') === false, "return false on image tag properly" );
    ok( _closeHTML('<span class="this">') === "</span>", "closes span tag properly" );
    ok( _closeHTML('<a href="http://google.com">') === "</a>", "closes anchor tag proerly properly" );
 });

@@ -92,7 +92,9 @@ define(function (require, exports, module) {
     function _closeHTML(str) {
         var _tag_type = new RegExp("[a-zA-Z0-9]+", ""),
             _tag = str.match(_tag_type);
-        if (_tag === "img") {
+        console.log(_tag);
+        if (_tag[0] === "img") {
+            console.log(_tag);
             return false;
         }
         return ("</" + _tag + ">");
@@ -101,7 +103,7 @@ define(function (require, exports, module) {
     /*
      * surround()
      * Description
-     * Adds surround text and repalce the current selection
+     * Adds surround text and replace the current selection
      */
     function surround() {
         var _t = _getSelectedText(),
@@ -121,6 +123,10 @@ define(function (require, exports, module) {
                     _output = _c + _t + cases[_c];
                 } else {
                     if (_isHTML(_c)) {
+                        if (_closeHTML(_c) === false) {
+                            Dialogs.cancelModalDialogIfOpen('.surround_input');
+                            return;
+                        }
                         _output = _c + _t + _closeHTML(_c);
                     } else {
                         _output = _c + _t + _c;

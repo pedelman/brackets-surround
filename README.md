@@ -11,7 +11,7 @@ Install Brackets at: http://download.brackets.io/
 Paste in the following URL
 
 ```
-https://github.com/pedelman/brackets-surround.git
+https://github.com/pedelman/brackets-surround
 ```
 
 ##### Step 2: Restart brackets

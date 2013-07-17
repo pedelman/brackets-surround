@@ -124,7 +124,7 @@ define(function (require, exports, module) {
                 } else {
                     if (_isHTML(_c)) {
                         if (_closeHTML(_c) === false) {
-                            Dialogs.cancelModalDialogIfOpen('.surround_input');
+                            Dialogs.cancelModalDialogIfOpen('surround_input');
                             return;
                         }
                         _output = _c + _t + _closeHTML(_c);
@@ -133,7 +133,7 @@ define(function (require, exports, module) {
                     }
                 }
                 $('.surround_input').fadeOut(300);
-                Dialogs.cancelModalDialogIfOpen('.surround_input');
+                Dialogs.cancelModalDialogIfOpen('surround_input');
                 _replaceActiveSelection(_output);
             }
         });

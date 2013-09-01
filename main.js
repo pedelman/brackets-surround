@@ -66,6 +66,7 @@ define(function (require, exports, module) {
      */
     function _replaceActiveSelection(str) {
         EditorManager.getActiveEditor()._codeMirror.replaceSelection(str);
+        EditorManager.getActiveEditor();
         EditorManager.focusEditor();
     }
 
@@ -114,7 +115,6 @@ define(function (require, exports, module) {
             if (e.which === 13) {
                 e.preventDefault();
                 var _c = $('#surround_input').val();
-                console.log(_c);
     
                 if (_c === null) {
                     return;

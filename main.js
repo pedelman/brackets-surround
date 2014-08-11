@@ -111,7 +111,7 @@ define(function (require, exports, module) {
             _output = "";
         Dialogs.showModalDialogUsingTemplate(surroundHtml);
         
-        $('#surround_input').keypress(function (e) {
+        $('#surround_input').keyup(function (e) { /*I modified the 'keypress' to 'keyup' */
             if (e.which === 13) {
                 e.preventDefault();
                 var _c = $('#surround_input').val();

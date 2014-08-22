@@ -110,8 +110,8 @@ define(function (require, exports, module) {
         var _t = _getSelectedText(),
             _output = "";
         Dialogs.showModalDialogUsingTemplate(surroundHtml);
-        
-        $('#surround_input').keypress(function (e) {
+        $('#surround_input').focus();
+        $('#surround_input').keyup(function (e) {
             if (e.which === 13) {
                 e.preventDefault();
                 var _c = $('#surround_input').val();

@@ -3,7 +3,7 @@
     "title": "Brackets Surround",
     "description": "A tool which allows you to wrap selected text with special characters and HTML.",
     "homepage": "https://github.com/pedelman/brackets-surround",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "author": "Patrick Edelman <patrick.the.edelman@gmail.com> (https://github.com/pedelman)",
     "license": "MIT",
     "engines": {

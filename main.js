@@ -54,8 +54,8 @@ define(function (require, exports, module) {
      * @private
      * Returns the text that has been selected in the editor window in focus     
      */
-    function _getSelectedText() {
-        return EditorManager.getActiveEditor().getSelectedText();
+    function _getSelectedText(allSelections ) {
+        return EditorManager.getActiveEditor().getSelectedText(allSelections);
     }
 
     /*
@@ -65,7 +65,7 @@ define(function (require, exports, module) {
      * @param {String} str
      */
     function _replaceActiveSelection(str) {
-        EditorManager.getActiveEditor()._codeMirror.replaceSelection(str);
+        EditorManager.getActiveEditor()._codeMirror.replaceSelections(str);
         EditorManager.getActiveEditor();
         EditorManager.focusEditor();
     }
@@ -107,34 +107,40 @@ define(function (require, exports, module) {
      * Adds surround text and replace the current selection
      */
     function surround() {
-        var _t = _getSelectedText(),
-            _output = "";
+        var _tt = _getSelectedText(true).split("\n");
         Dialogs.showModalDialogUsingTemplate(surroundHtml);
         $('#surround_input').focus();
         $('#surround_input').keyup(function (e) {
             if (e.which === 13) {
                 e.preventDefault();
                 var _c = $('#surround_input').val();
-    
+
                 if (_c === null) {
                     return;
                 }
-                if (cases[_c] !== undefined) {
-                    _output = _c + _t + cases[_c];
-                } else {
-                    if (_isHTML(_c)) {
-                        if (_closeHTML(_c) === false) {
-                            Dialogs.cancelModalDialogIfOpen('surround_input');
-                            return;
-                        }
-                        _output = _c + _t + _closeHTML(_c);
+
+                var _outputs = [];
+                for (i=0;i<_tt.length;i++) {
+                    var _output = "";
+                    var _t = _tt[i];
+                    if (cases[_c] !== undefined) {
+                        _output = _c + _t + cases[_c];
                     } else {
-                        _output = _c + _t + _c;
+                        if (_isHTML(_c)) {
+                            if (_closeHTML(_c) === false) {
+                                Dialogs.cancelModalDialogIfOpen('surround_input');
+                                return;
+                            }
+                            _output = _c + _t + _closeHTML(_c);
+                        } else {
+                            _output = _c + _t + _c;
+                        }
                     }
+                    _outputs.push(_output);
                 }
                 $('.surround_input').fadeOut(300);
                 Dialogs.cancelModalDialogIfOpen('surround_input');
-                _replaceActiveSelection(_output);
+                _replaceActiveSelection(_outputs);
             }
         });
     }

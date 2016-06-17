@@ -50,19 +50,21 @@ define(function (require, exports, module) {
     ExtensionUtils.loadStyleSheet(module, "surround-input-modal.css");
 
     /*
-     * _getSelectedText()
+     * _getSelectedText(allSelections)
      * @private
-     * Returns the text that has been selected in the editor window in focus     
+	 * @param {boolean} allSelections
+     * Returns the text that has been selected in the editor window in focus.
+	 * If allSelections is true then multiple selections will be returned if any joined by '\n' (new line)
      */
-    function _getSelectedText(allSelections ) {
+    function _getSelectedText(allSelections) {
         return EditorManager.getActiveEditor().getSelectedText(allSelections);
     }
 
     /*
      * _replaceActiveString(str)
      * @private     
-     * Replaces the currently selected text with the passed string param 
-     * @param {String} str
+     * Replaces the currently selected text with the passed array param. Array length should be same as selections parts.
+     * @param {Array} str
      */
     function _replaceActiveSelection(str) {
         EditorManager.getActiveEditor()._codeMirror.replaceSelections(str);
